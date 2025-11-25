@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import AccountService from '../../services/account.service';
 import type { Address, AddressCreate } from '../../types/account';
+import { useUbigeo } from '../../hooks/useUbigeo';
 
 export default function AddressesPage() {
     const [addresses, setAddresses] = useState<Address[]>([]);
@@ -9,6 +10,9 @@ export default function AddressesPage() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    // UBIGEO Hook for cascading selects
+    const ubigeo = useUbigeo();
 
     const [formData, setFormData] = useState<AddressCreate>({
         addressType: 'Casa',
@@ -30,9 +34,10 @@ export default function AddressesPage() {
             setError(null);
             const data = await AccountService.getAddresses();
             setAddresses(data);
-        } catch (err: any) {
+        } catch (err) {
             // Si es 404, significa que el usuario no tiene CustomerEntity o direcciones
-            if (err?.response?.status === 404 || err?.message?.includes('404')) {
+            const errorResponse = err as { response?: { status?: number }; message?: string };
+            if (errorResponse?.response?.status === 404 || errorResponse?.message?.includes('404')) {
                 // Usuario nuevo o sin direcciones - no mostrar error
                 setAddresses([]);
                 console.log('Usuario sin direcciones registradas');
@@ -53,12 +58,29 @@ export default function AddressesPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Validate UBIGEO selection
+        if (!ubigeo.state.selectedDeptName || !ubigeo.state.selectedProvName || !ubigeo.state.selectedDistName) {
+            setError('Por favor, seleccione Departamento, Provincia y Distrito');
+            return;
+        }
+
         try {
             setSaving(true);
             setError(null);
-            await AccountService.addAddress(formData);
+
+            // Prepare payload with UBIGEO names
+            const addressPayload: AddressCreate = {
+                ...formData,
+                department: ubigeo.state.selectedDeptName,
+                province: ubigeo.state.selectedProvName,
+                district: ubigeo.state.selectedDistName,
+            };
+
+            await AccountService.addAddress(addressPayload);
             setSuccessMessage('✓ Dirección agregada correctamente');
             setShowForm(false);
+
+            // Reset form
             setFormData({
                 addressType: 'Casa',
                 department: '',
@@ -68,6 +90,8 @@ export default function AddressesPage() {
                 addressReference: '',
                 addressPhone: '',
             });
+            ubigeo.reset();
+
             await loadAddresses();
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
@@ -77,8 +101,6 @@ export default function AddressesPage() {
             setSaving(false);
         }
     };
-
-
 
     if (loading) {
         return (
@@ -104,8 +126,7 @@ export default function AddressesPage() {
                 </div>
             )}
 
-            {/* Solo mostrar error si es un error real, no cuando simplemente no hay direcciones */}
-            {error && addresses.length > 0 && (
+            {error && (
                 <div className="alert alert-danger alert-dismissible fade show" role="alert">
                     {error}
                     <button type="button" className="btn-close" onClick={() => setError(null)}></button>
@@ -145,48 +166,70 @@ export default function AddressesPage() {
                                         required
                                     />
                                 </div>
+
+                                {/* UBIGEO Cascading Selects */}
                                 <div className="col-md-4 mb-3">
-                                    <label htmlFor="department" className="form-label">Departamento</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
+                                    <label htmlFor="department" className="form-label">
+                                        Departamento <span className="text-danger">*</span>
+                                    </label>
+                                    <select
+                                        className="form-select"
                                         id="department"
-                                        name="department"
-                                        value={formData.department}
-                                        onChange={handleInputChange}
-                                        placeholder="Lima"
+                                        value={ubigeo.state.selectedDeptId}
+                                        onChange={(e) => ubigeo.onDeptChange(e.target.value)}
                                         required
-                                        maxLength={100}
-                                    />
+                                    >
+                                        <option value="">Seleccione departamento</option>
+                                        {ubigeo.departments.map((dept) => (
+                                            <option key={dept.id} value={dept.id}>
+                                                {dept.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
+
                                 <div className="col-md-4 mb-3">
-                                    <label htmlFor="province" className="form-label">Provincia</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
+                                    <label htmlFor="province" className="form-label">
+                                        Provincia <span className="text-danger">*</span>
+                                    </label>
+                                    <select
+                                        className="form-select"
                                         id="province"
-                                        name="province"
-                                        value={formData.province}
-                                        onChange={handleInputChange}
-                                        placeholder="Lima"
+                                        value={ubigeo.state.selectedProvId}
+                                        onChange={(e) => ubigeo.onProvChange(e.target.value)}
+                                        disabled={ubigeo.isProvinceDisabled}
                                         required
-                                        maxLength={100}
-                                    />
+                                    >
+                                        <option value="">Seleccione provincia</option>
+                                        {ubigeo.availableProvinces.map((prov) => (
+                                            <option key={prov.id} value={prov.id}>
+                                                {prov.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
+
                                 <div className="col-md-4 mb-3">
-                                    <label htmlFor="district" className="form-label">Distrito</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
+                                    <label htmlFor="district" className="form-label">
+                                        Distrito <span className="text-danger">*</span>
+                                    </label>
+                                    <select
+                                        className="form-select"
                                         id="district"
-                                        name="district"
-                                        value={formData.district}
-                                        onChange={handleInputChange}
-                                        placeholder="Miraflores"
+                                        value={ubigeo.state.selectedDistId}
+                                        onChange={(e) => ubigeo.onDistChange(e.target.value)}
+                                        disabled={ubigeo.isDistrictDisabled}
                                         required
-                                        maxLength={100}
-                                    />
+                                    >
+                                        <option value="">Seleccione distrito</option>
+                                        {ubigeo.availableDistricts.map((dist) => (
+                                            <option key={dist.id} value={dist.id}>
+                                                {dist.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
+
                                 <div className="col-md-8 mb-3">
                                     <label htmlFor="addressLine" className="form-label">Dirección</label>
                                     <input
