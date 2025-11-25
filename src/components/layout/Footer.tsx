@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useCategories } from '../../hooks/useCategories';
 
 export default function Footer() {
+    const { categories, loading } = useCategories();
+
     return (
         <footer className="bg-light pt-5">
             <div className="container">
@@ -36,40 +39,20 @@ export default function Footer() {
                         <h6 className="fw-bold">Tienda</h6>
                         <ul className="list-unstyled">
                             <li>
-                                <a href="#" className="text-dark text-decoration-none">
+                                <Link to="/shop" className="text-dark text-decoration-none">
                                     Comprar todo
-                                </a>
+                                </Link>
                             </li>
-                            <li>
-                                <a href="#" className="text-dark text-decoration-none">
-                                    Monitores
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-dark text-decoration-none">
-                                    Tabletas
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-dark text-decoration-none">
-                                    Ratones
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-dark text-decoration-none">
-                                    Audífonos
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-dark text-decoration-none">
-                                    Tarjetas Gráficas
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="text-dark text-decoration-none">
-                                    Oferta
-                                </a>
-                            </li>
+                            {!loading && categories.slice(0, 6).map((category) => (
+                                <li key={category.id}>
+                                    <Link
+                                        to={`/shop?category=${category.id}`}
+                                        className="text-dark text-decoration-none"
+                                    >
+                                        {category.name}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
@@ -78,34 +61,24 @@ export default function Footer() {
                         <h6 className="fw-bold">Atención al cliente</h6>
                         <ul className="list-unstyled">
                             <li>
-                                <Link to="/preguntas-frecuentes" className="text-dark text-decoration-none">
+                                <Link to="/faq" className="text-dark text-decoration-none">
                                     Preguntas frecuentes
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/libro-reclamaciones" className="text-dark text-decoration-none">
-                                    Libro de reclamaciones
-                                </Link>
-                            </li>
-                            <li>
-                                <a href="#" className="text-dark text-decoration-none">
+                                <Link to="/support" className="text-dark text-decoration-none">
                                     Asistencia
-                                </a>
-                            </li>
-                            <li>
-                                <Link to="/acerca-de" className="text-dark text-decoration-none">
-                                    Acerca de
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/nosotros" className="text-dark text-decoration-none">
+                                <Link to="/about" className="text-dark text-decoration-none">
                                     Nosotros
                                 </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-dark text-decoration-none">
-                                    Empleos
-                                </a>
+                                <Link to="/claims" className="text-dark text-decoration-none">
+                                    Libro de reclamaciones
+                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -115,22 +88,22 @@ export default function Footer() {
                         <h6 className="fw-bold">Política</h6>
                         <ul className="list-unstyled">
                             <li>
-                                <Link to="/envios-devoluciones" className="text-dark text-decoration-none">
+                                <Link to="/shipping" className="text-dark text-decoration-none">
                                     Envío y devoluciones
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/terminos-condiciones" className="text-dark text-decoration-none">
+                                <Link to="/terms" className="text-dark text-decoration-none">
                                     Términos y condiciones
                                 </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-dark text-decoration-none">
+                                <Link to="/payment-methods" className="text-dark text-decoration-none">
                                     Métodos de pago
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <Link to="/politicas-privacidad" className="text-dark text-decoration-none">
+                                <Link to="/privacy" className="text-dark text-decoration-none">
                                     Política de privacidad
                                 </Link>
                             </li>

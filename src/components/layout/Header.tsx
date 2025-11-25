@@ -373,6 +373,13 @@ export default function Header() {
                 <div className="container">
                     <div className="collapse navbar-collapse" id="menuCategorias">
                         <ul className="navbar-nav mx-auto">
+                            {/* Inicio */}
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/">
+                                    Inicio
+                                </Link>
+                            </li>
+
                             {/* Productos con dropdown dinámico */}
                             <li
                                 className="nav-item dropdown position-relative"
@@ -398,35 +405,24 @@ export default function Header() {
                                 </ul>
                             </li>
 
-                            {/* Categorías estáticas del legacy (mantener por compatibilidad) */}
+                            {/* Preguntas frecuentes */}
                             <li className="nav-item">
-                                <Link className="nav-link category-link" to="/shop?categoria=monitores">
-                                    Monitores
+                                <Link className="nav-link" to="/faq">
+                                    Preguntas frecuentes
                                 </Link>
                             </li>
+
+                            {/* Términos y condiciones */}
                             <li className="nav-item">
-                                <Link className="nav-link category-link" to="/shop?categoria=ratones">
-                                    Mouses
+                                <Link className="nav-link" to="/terms">
+                                    Términos y condiciones
                                 </Link>
                             </li>
+
+                            {/* Política de privacidad */}
                             <li className="nav-item">
-                                <Link className="nav-link category-link" to="/shop?categoria=audifonos">
-                                    Audífonos
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link category-link" to="/shop?categoria=teclados">
-                                    Teclados
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link category-link" to="/shop?categoria=graficas">
-                                    Tarjetas Gráficas
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link text-danger fw-bold category-link" to="/shop?categoria=ofertas">
-                                    Ofertas
+                                <Link className="nav-link" to="/privacy">
+                                    Política de privacidad
                                 </Link>
                             </li>
                         </ul>
