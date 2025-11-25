@@ -222,7 +222,10 @@ export default function Header() {
                                         <i className="bi bi-person-circle fs-5"></i>
                                         <span className="d-none d-md-inline">{user?.email}</span>
                                     </button>
-                                    <ul className={`dropdown-menu dropdown-menu-end ${showUserMenu ? 'show' : ''}`}>
+                                    <ul
+                                        className={`dropdown-menu dropdown-menu-end ${showUserMenu ? 'show' : ''}`}
+                                        style={{ zIndex: 2000 }}
+                                    >
                                         <li>
                                             <span className="dropdown-item-text">
                                                 <small className="text-muted">Bienvenido,</small>
