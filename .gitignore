@@ -1,0 +1,46 @@
+# Directorios de dependencias
+/node_modules
+
+# Directorios de Compilación, Build y Distribución (Vite/React)
+/dist
+/build
+/out
+/dist-ssr
+/.vite # Caché de Vite
+/temp # Directorios temporales comunes
+
+# Logs y archivos de Depuración
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Variables de Entorno y Configuraciones Locales
+# Ignora archivos .env, pero NO el archivo de ejemplo (.example), si existe
+.env
+.env.*
+!.env.production.example
+
+# Archivos de Caché y SO
+.DS_Store # macOS
+Thumbs.db # Windows
+*.local # Archivos de configuración locales/sobrescritura
+
+# Archivos y Configuraciones de IDE/Editor
+# Visual Studio Code (VS Code)
+.vscode
+!.vscode/extensions.json # Si quieres compartir las extensiones recomendadas
+!.vscode/settings.json # Si quieres compartir configuraciones, ¡quítalo!
+
+# JetBrains IDEs (WebStorm, IntelliJ)
+.idea
+
+# Otros archivos de proyecto/solución de IDEs (VS, etc.)
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
